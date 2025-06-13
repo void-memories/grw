@@ -3,6 +3,7 @@ package dev.namn.cli
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.subcommands
 import dev.namn.cli.commands.BuildVariant
+import dev.namn.cli.commands.Clean
 import dev.namn.cli.commands.Config
 import dev.namn.cli.commands.Flavor
 import dev.namn.cli.commands.Sync
@@ -32,6 +33,7 @@ fun main(args: Array<String>) = GrwCliImpl()
         Flavor(),
         BuildVariant(),
         Config(),
-        Sync()
+        Sync(),
+        Clean()
     )
     .main(args) 
