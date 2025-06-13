@@ -10,7 +10,7 @@ class Clean : CliktCommand(
 ) {
     override fun run() {
         Loader.start()
-        runShell("./gradlew clean")
+        runShell("./gradlew -q clean")
         Loader.stop()
     }
 }

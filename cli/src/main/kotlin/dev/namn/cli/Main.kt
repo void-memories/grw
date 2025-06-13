@@ -6,7 +6,9 @@ import dev.namn.cli.commands.BuildVariant
 import dev.namn.cli.commands.Clean
 import dev.namn.cli.commands.Config
 import dev.namn.cli.commands.Flavor
+import dev.namn.cli.commands.Gen
 import dev.namn.cli.commands.Sync
+import dev.namn.cli.commands.Task
 
 class GrwCliImpl : CliktCommand(
     name = "grw",
@@ -34,6 +36,8 @@ fun main(args: Array<String>) = GrwCliImpl()
         BuildVariant(),
         Config(),
         Sync(),
-        Clean()
+        Clean(),
+        Task(),
+        Gen()
     )
     .main(args) 
