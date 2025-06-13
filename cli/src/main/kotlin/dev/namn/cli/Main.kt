@@ -2,12 +2,8 @@ package dev.namn.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.subcommands
-import dev.namn.cli.commands.ListFlavors
-import dev.namn.cli.commands.ShowProjectInfo
+import dev.namn.cli.commands.Flavor
 
-/**
- * Main CLI command for the GRW tool
- */
 class GrwCliImpl : CliktCommand(
     name = "grw",
     help = """
@@ -25,12 +21,8 @@ class GrwCliImpl : CliktCommand(
     }
 }
 
-/**
- * Main entry point for the CLI application
- */
 fun main(args: Array<String>) = GrwCliImpl()
     .subcommands(
-        ListFlavors(),
-        ShowProjectInfo()
+        Flavor(),
     )
     .main(args) 
