@@ -4,9 +4,11 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.subcommands
 import dev.namn.cli.commands.BuildVariant
 import dev.namn.cli.commands.Clean
+import dev.namn.cli.commands.CleanBuild
 import dev.namn.cli.commands.Config
 import dev.namn.cli.commands.Flavor
 import dev.namn.cli.commands.Gen
+import dev.namn.cli.commands.Run
 import dev.namn.cli.commands.Sync
 import dev.namn.cli.commands.Task
 
@@ -38,6 +40,8 @@ fun main(args: Array<String>) = GrwCliImpl()
         Sync(),
         Clean(),
         Task(),
-        Gen()
+        Gen(),
+        CleanBuild(),
+        Run()
     )
     .main(args) 
