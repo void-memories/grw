@@ -67,9 +67,16 @@ object GrwConfig {
         writeConfigToDisk()
     }
 
-    fun setVariant(variant: String) = apply {
+    fun setBuildVariant(variant: String) = apply {
         Logger.info("Setting variant → $variant")
         this.variant = variant
         writeConfigToDisk()
+    }
+
+    override fun toString(): String {
+        return JSONObject().apply {
+            put("flavor", flavor)
+            put("variant", variant)
+        }.toString()
     }
 }

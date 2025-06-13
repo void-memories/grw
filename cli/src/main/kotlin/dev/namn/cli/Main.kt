@@ -2,7 +2,10 @@ package dev.namn.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.subcommands
+import dev.namn.cli.commands.BuildVariant
+import dev.namn.cli.commands.Config
 import dev.namn.cli.commands.Flavor
+import dev.namn.cli.commands.Sync
 
 class GrwCliImpl : CliktCommand(
     name = "grw",
@@ -20,11 +23,15 @@ class GrwCliImpl : CliktCommand(
         println()
 
         GrwConfig.init()
+        println()
     }
 }
 
 fun main(args: Array<String>) = GrwCliImpl()
     .subcommands(
         Flavor(),
+        BuildVariant(),
+        Config(),
+        Sync()
     )
     .main(args) 

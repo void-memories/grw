@@ -5,22 +5,22 @@ import dev.namn.cli.GrwConfig
 import dev.namn.cli.utils.AndroidProjectAnalyzer
 import dev.namn.cli.utils.Input
 
-class Flavor : CliktCommand(
-    name = "flavor",
-    help = "🚀 list and set product flavors"
+class BuildVariant : CliktCommand(
+    name = "variant",
+    help = "🚀 list and set build variants"
 ) {
     private val analyzer = AndroidProjectAnalyzer()
 
     override fun run() {
         try {
-            val flavors = analyzer.getFlavors().map { it.name }
-            if (flavors.isEmpty()) {
+            val buildVariants = analyzer.getBuildVariants()
+            if (buildVariants.isEmpty()) {
                 echo("⚠️ No flavors found.")
                 return
             }
 
-            val selected = Input.promptList(flavors)
-            GrwConfig.setFlavor(selected)
+            val selected = Input.promptList(buildVariants)
+            GrwConfig.setBuildVariant(selected)
 
             echo("\n✅ You selected: $selected")
         } catch (e: Exception) {
