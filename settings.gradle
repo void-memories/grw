@@ -1,0 +1,2 @@
+rootProject.name = "grw"
+include("cli", "gradle-plugin", "sample-app")

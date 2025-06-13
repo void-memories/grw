@@ -1,0 +1,33 @@
+# Android Build artifacts
+/build/
+/app/build/
+/.gradle/
+
+# Local configuration files
+/local.properties
+
+# IDE files specific to sample app
+/.idea/
+
+# Android specific
+/captures/
+.externalNativeBuild/
+.cxx/
+
+# Generated files
+/app/release/
+/app/debug/
+
+# APK files
+*.apk
+*.aab
+
+# ProGuard
+/app/proguard/
+
+# Data files created by our plugin
+/.grw/
+
+# Sample app logs
+sample.log
+*.sample.log 

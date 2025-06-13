@@ -1,0 +1,55 @@
+# IDE and OS files
+*.iml
+.DS_Store
+*/.DS_Store
+
+# Gradle files
+.gradle/
+*/.gradle/
+/build/
+*/build/
+/local.properties
+*/local.properties
+
+# IntelliJ IDEA
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+/.idea/gradle.xml
+/.idea/misc.xml
+/.idea/compiler.xml
+/.idea/jarRepositories.xml
+/.idea/vcs.xml
+
+# Android specific
+/captures
+.externalNativeBuild
+.cxx
+
+# CLI build artifacts
+cli/build/
+cli/.gradle/
+
+# Gradle plugin artifacts
+gradle-plugin/build/
+gradle-plugin/.gradle/
+
+# Sample app artifacts  
+sample-app/build/
+sample-app/.gradle/
+sample-app/app/build/
+sample-app/.idea/
+
+# Data exchange directory (if using file-based approach)
+.grw/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+.idea/

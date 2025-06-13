@@ -1,0 +1,23 @@
+# CLI Build artifacts
+/build/
+/.gradle/
+
+# CLI Installation directory
+/install/
+
+# CLI Distribution files
+/distributions/
+
+# CLI Scripts
+/scripts/
+
+# Kotlin compilation
+/classes/
+/kotlin/
+
+# CLI specific temporary files
+*.cli.tmp
+
+# CLI logs
+cli.log
+*.cli.log 
