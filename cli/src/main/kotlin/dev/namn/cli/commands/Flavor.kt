@@ -4,6 +4,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.kinquirer.KInquirer
 import com.github.kinquirer.components.ListViewOptions
 import com.github.kinquirer.components.promptList
+import dev.namn.cli.GrwConfig
 import dev.namn.cli.utils.AndroidProjectAnalyzer
 
 class Flavor : CliktCommand(
@@ -31,6 +32,9 @@ class Flavor : CliktCommand(
                     nonCursor = "   "
                 )
             )
+
+            GrwConfig.setFlavor(selected)
+
             echo("\n✅ You selected: $selected")
         } catch (e: Exception) {
             echo("❌ Error: ${e.message}")

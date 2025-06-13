@@ -18,6 +18,8 @@ class GrwCliImpl : CliktCommand(
         println("🚀 Welcome to GRW CLI!")
         println("💡 Use --help to see available commands")
         println()
+
+        GrwConfig.init()
     }
 }
 

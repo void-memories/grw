@@ -18,9 +18,9 @@ dependencies {
   implementation("com.github.ajalt.clikt:clikt:4.0.0")
   implementation("org.gradle:gradle-tooling-api:8.1.1")
   implementation("com.android.tools.build:gradle:8.1.0")
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
   runtimeOnly("org.slf4j:slf4j-simple:2.0.9")
   implementation("com.github.kotlin-inquirer:kotlin-inquirer:0.1.0")
+  implementation("org.json:json:20230227")
 }
 
 kotlin {
