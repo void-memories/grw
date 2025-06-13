@@ -2,34 +2,35 @@ package dev.namn.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.subcommands
+import dev.namn.cli.commands.ListFlavors
+import dev.namn.cli.commands.ShowProjectInfo
 
-class ListFlavors : CliktCommand(name = "flavor-list", help = "List Android flavors") {
+/**
+ * Main CLI command for the GRW tool
+ */
+class GrwCliImpl : CliktCommand(
+    name = "grw",
+    help = """
+    🚀 GRW - Gradle Android CLI Tool
+    
+    Powerful CLI for Android Gradle projects using Gradle Tooling API.
+    Direct access to project models - no plugin communication needed!
+    """.trimIndent()
+) {
     override fun run() {
-        val output = runBashCommand("./gradlew grwListFlavors")
-        println(output)
+        println()
+        println("🚀 Welcome to GRW CLI!")
+        println("💡 Use --help to see available commands")
+        println()
     }
 }
 
-private fun runBashCommand(command: String): String {
-    val process = ProcessBuilder("/bin/bash", "-c", command)
-        .redirectErrorStream(true)
-        .start()
-
-    val output = process.inputStream.bufferedReader().readText().trim()
-    val exitCode = process.waitFor()
-
-    if (exitCode != 0) {
-        throw RuntimeException("Command failed with exit code $exitCode:\n$output")
-    }
-
-    return output
-}
-
-class GrwCliImpl : CliktCommand() {
-    override fun run() {
-    }
-}
-
+/**
+ * Main entry point for the CLI application
+ */
 fun main(args: Array<String>) = GrwCliImpl()
-    .subcommands(ListFlavors())
-    .main(args)
+    .subcommands(
+        ListFlavors(),
+        ShowProjectInfo()
+    )
+    .main(args) 

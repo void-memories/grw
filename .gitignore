@@ -33,10 +33,6 @@
 cli/build/
 cli/.gradle/
 
-# Gradle plugin artifacts
-gradle-plugin/build/
-gradle-plugin/.gradle/
-
 # Sample app artifacts  
 sample-app/build/
 sample-app/.gradle/

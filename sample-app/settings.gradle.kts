@@ -22,6 +22,5 @@ dependencyResolutionManagement {
 rootProject.name = "grw sample"
 include(":app")
 
-// Include the parent gradle-plugin as a composite build
-includeBuild("../gradle-plugin")
+// Include only the CLI (gradle-plugin removed as it's redundant)
 includeBuild("../cli")
