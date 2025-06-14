@@ -26,13 +26,28 @@ class AndroidProjectAnalyzer {
     }
 
     fun getBuildTypes(): List<String> {
-        return listOf("debug", "release")
+        return GradleConnector.newConnector()
+            .forProjectDirectory(projectDir)
+            .connect().use { connection ->
+                val gradleProject = connection.getModel(GradleProject::class.java)
+                val project = findAppProject(gradleProject) ?: gradleProject
+
+                val buildFile = File(project.projectDirectory, "build.gradle.kts")
+                if (!buildFile.exists()) {
+                    val buildFileGroovy = File(project.projectDirectory, "build.gradle")
+                    if (!buildFileGroovy.exists()) {
+                        throw IllegalStateException("No build.gradle or build.gradle.kts file found in project directory: ${project.projectDirectory}")
+                    }
+                    return@use parseBuildTypesFromBuildFile(buildFileGroovy)
+                }
+
+                parseBuildTypesFromBuildFile(buildFile)
+            }
     }
 
     fun getProjectModules(): List<String> {
         val modules = mutableListOf<String>()
         
-        // Try settings.gradle.kts first, then settings.gradle
         val settingsKts = File(projectDir, "settings.gradle.kts")
         val settingsGroovy = File(projectDir, "settings.gradle")
         
@@ -50,7 +65,6 @@ class AndroidProjectAnalyzer {
             
             includeRegex.findAll(content).forEach { match ->
                 val moduleName = match.groupValues[1].ifEmpty { match.groupValues[2] }
-                // Remove the leading colon if present
                 val cleanName = moduleName.removePrefix(":")
                 modules.add(cleanName)
             }
@@ -62,7 +76,6 @@ class AndroidProjectAnalyzer {
     }
 
     private fun findAppProject(project: GradleProject): GradleProject? {
-        //TODO: take in onboarding step
         project.children.find { it.name == "app" }?.let { return it }
 
         return null
@@ -84,6 +97,58 @@ class AndroidProjectAnalyzer {
             return flavors
         } catch (e: Exception) {
             return emptyList()
+        }
+    }
+
+    private fun parseBuildTypesFromBuildFile(buildFile: File): List<String> {
+        try {
+            val content = buildFile.readText()
+            val buildTypes = mutableSetOf<String>()
+
+            // Pattern 1: buildTypes { debug { ... }, release { ... } }
+            val buildTypesBlockRegex = """buildTypes\s*\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}""".toRegex()
+            val buildTypesBlock = buildTypesBlockRegex.find(content)?.groupValues?.get(1)
+            
+            if (buildTypesBlock != null) {
+                // Find individual build type names within the block - look for name followed by {
+                // But avoid matching nested blocks like applicationId or other properties
+                val buildTypeNameRegex = """^\s*(\w+)\s*\{""".toRegex(RegexOption.MULTILINE)
+                buildTypeNameRegex.findAll(buildTypesBlock).forEach { match ->
+                    val buildTypeName = match.groupValues[1]
+                    // Skip common property names that might be mistaken for build types
+                    if (buildTypeName !in listOf("applicationId", "versionCode", "versionName", "testInstrumentationRunner", "proguardFiles", "buildFeatures", "compileOptions", "kotlinOptions", "signingConfig")) {
+                        buildTypes.add(buildTypeName)
+                    }
+                }
+            }
+            
+            // Pattern 2: create("buildTypeName") { ... } within buildTypes block
+            if (buildTypesBlock != null) {
+                val createBuildTypeRegex = """create\s*\(\s*["']([^"']+)["']\s*\)""".toRegex()
+                createBuildTypeRegex.findAll(buildTypesBlock).forEach { match ->
+                    val buildTypeName = match.groupValues[1]
+                    buildTypes.add(buildTypeName)
+                }
+            }
+            
+            // Pattern 3: register("buildTypeName") { ... } within buildTypes block  
+            if (buildTypesBlock != null) {
+                val registerBuildTypeRegex = """register\s*\(\s*["']([^"']+)["']\s*\)""".toRegex()
+                registerBuildTypeRegex.findAll(buildTypesBlock).forEach { match ->
+                    val buildTypeName = match.groupValues[1]
+                    buildTypes.add(buildTypeName)
+                }
+            }
+
+            // Android projects always have 'debug' build type by default, even if not explicitly declared
+            // If we found a buildTypes block but no debug, add it
+            if (buildTypesBlock != null && !buildTypes.contains("debug")) {
+                buildTypes.add("debug")
+            }
+
+            return buildTypes.toList().sorted()
+        } catch (e: Exception) {
+            throw IllegalStateException("Failed to parse build types from ${buildFile.name}: ${e.message}", e)
         }
     }
 }
