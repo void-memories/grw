@@ -1,5 +1,7 @@
 package dev.namn.cli.utils
 
+import org.json.JSONObject
+
 object UI {
     const val RESET = "\u001B[0m"
     const val BLACK = "\u001B[30m"
@@ -89,5 +91,33 @@ object UI {
 
     fun showSelectionResult(selected: String, type: String = "option") {
         println("${BRIGHT_GREEN}✓${RESET} Selected ${BOLD}$selected${RESET} as $type")
+    }
+
+    fun showJsonObject(json: JSONObject, title: String = "") {
+        val entries = json.keys().asSequence()
+            .map { k -> k to json.opt(k).toString() }
+            .toList()
+        if (entries.isEmpty()) return
+
+        val keyWidth = entries.maxOf { it.first.length }
+        val valWidth = entries.maxOf { it.second.length }
+
+        val rawLines = entries.map { (k, v) ->
+            " " + k.padEnd(keyWidth) + "  " + v.padEnd(valWidth) + " "
+        }
+
+        val innerWidth = rawLines.maxOf { it.length }
+
+        if (title.isNotBlank()) {
+            println("$BOLD$title$RESET")
+        }
+
+        println("┌${"─".repeat(innerWidth)}┐")
+
+        rawLines.forEach { line ->
+            println("│" + line.padEnd(innerWidth) + "│")
+        }
+
+        println("└${"─".repeat(innerWidth)}┘")
     }
 }

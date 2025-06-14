@@ -44,7 +44,7 @@ object GrwConfig {
         try {
             val json = JSONObject()
             selectedVariant?.let { json.put("selectedVariant", it) }
-            
+
             configFile.writeText(json.toString(2))
             Logger.info("Config written to disk → selectedVariant=$selectedVariant")
         } catch (e: IOException) {
@@ -56,6 +56,10 @@ object GrwConfig {
         Logger.info("Setting variant → $variant")
         this.selectedVariant = variant
         writeConfigToDisk()
+    }
+
+    fun toJsonObject(): JSONObject = JSONObject().apply {
+        put("variant", selectedVariant)
     }
 
     override fun toString(): String {

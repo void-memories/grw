@@ -23,18 +23,7 @@ class GrwCliImpl : CliktCommand(
 ) {
     override fun run() {
         println()
-
         GrwConfig.init()
-        
-//        UI.showConnectionSteps()
-        
-//        UI.showGradleProjectInfo(
-//            projectName = "android-project",
-//            rootDir = System.getProperty("user.dir"),
-//            gradleVersion = "8.5"
-//        )
-        
-//        println("${UI.DIM}Opening workspace in preferred editor...${UI.RESET}")
         println()
     }
 }
