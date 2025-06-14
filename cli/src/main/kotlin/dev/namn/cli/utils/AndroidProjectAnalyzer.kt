@@ -25,8 +25,23 @@ class AndroidProjectAnalyzer {
             }
     }
 
-    fun getBuildVariants(): List<String> {
+    fun getBuildTypes(): List<String> {
         return listOf("debug", "release")
+    }
+
+    fun getBuildVariants(): List<String> {
+        val flavors = getFlavors().map { it.name }
+        val buildTypes = getBuildTypes()
+        
+        if (flavors.isEmpty()) return buildTypes
+        
+        val variants = mutableListOf<String>()
+        for (flavor in flavors) {
+            for (buildType in buildTypes) {
+                variants.add("$flavor${buildType.replaceFirstChar { it.uppercase() }}")
+            }
+        }
+        return variants
     }
 
     private fun findAppProject(project: GradleProject): GradleProject? {

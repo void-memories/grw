@@ -21,6 +21,9 @@ dependencies {
   runtimeOnly("org.slf4j:slf4j-simple:2.0.9")
   implementation("com.github.kotlin-inquirer:kotlin-inquirer:0.1.0")
   implementation("org.json:json:20230227")
+  
+  // Enhanced UI dependencies
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 }
 
 kotlin {
@@ -34,4 +37,10 @@ java {
 
 application {
   mainClass.set("dev.namn.cli.MainKt")
+  
+  // Handle JANSI native library issues gracefully
+  applicationDefaultJvmArgs = listOf(
+    "-Djansi.passthrough=true",
+    "-Djansi.strip=false"
+  )
 }
