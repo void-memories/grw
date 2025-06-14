@@ -33,7 +33,7 @@
 cli/build/
 cli/.gradle/
 
-# Sample app artifacts  
+# Sample app artifacts
 sample-app/build/
 sample-app/.gradle/
 sample-app/app/build/
@@ -41,6 +41,7 @@ sample-app/.idea/
 
 # Data exchange directory (if using file-based approach)
 .grw/
+grw
 
 # Logs
 *.log
@@ -49,6 +50,3 @@ sample-app/.idea/
 *.tmp
 *.temp
 .idea/
-
-# extern
-.grw

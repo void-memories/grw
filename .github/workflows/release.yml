@@ -23,7 +23,6 @@ jobs:
         java-version: '18'
 
     - name: Build distZip
-      working-directory: sample-app
       run: ./gradlew :cli:distZip
 
     - name: Create GitHub Release

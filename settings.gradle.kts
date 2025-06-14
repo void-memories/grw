@@ -22,5 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "grw sample"
 include(":app")
 
-// Include only the CLI (gradle-plugin removed as it's redundant)
-includeBuild("../cli")
+includeBuild("cli")
