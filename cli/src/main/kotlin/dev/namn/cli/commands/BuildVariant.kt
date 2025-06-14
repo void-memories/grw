@@ -20,11 +20,6 @@ class BuildVariant : CliktCommand(
             val flavors = analyzer.getFlavors().map { it.name }
             val buildTypes = analyzer.getBuildTypes()
             
-            if (flavors.isEmpty()) {
-                UI.showWarning("No flavors found - using default configuration")
-                return
-            }
-            
             if (buildTypes.isEmpty()) {
                 UI.showError("No build types found in project")
                 return
@@ -37,7 +32,12 @@ class BuildVariant : CliktCommand(
                 )
             }
             
-            val selectedVariant = Input.promptBuildVariant(flavors, buildTypes)
+            val selectedVariant = if (flavors.isEmpty()) {
+                UI.showInfo("No custom flavors found - selecting from available build types")
+                Input.promptBuildType(buildTypes)
+            } else {
+                Input.promptBuildVariant(flavors, buildTypes)
+            }
             
             Loader.start("Saving configuration")
             GrwConfig.setVariant(selectedVariant)

@@ -44,4 +44,12 @@ object Input {
             hint = "Choose your flavor + build type combination"
         )
     }
+
+    fun promptBuildType(buildTypes: List<String>): String {
+        return promptList(
+            choices = buildTypes,
+            message = "Select build type",
+            hint = "Choose your build type (debug/release)"
+        )
+    }
 }
