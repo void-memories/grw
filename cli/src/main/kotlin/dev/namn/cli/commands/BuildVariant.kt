@@ -4,16 +4,17 @@ import com.github.ajalt.clikt.core.CliktCommand
 import dev.namn.cli.GrwConfig
 import dev.namn.cli.utils.AndroidProjectAnalyzer
 import dev.namn.cli.utils.Input
+import dev.namn.cli.utils.Loader
 import dev.namn.cli.utils.UI
 
 class BuildVariant : CliktCommand(
     name = "variant",
-    help = "${UI.BRIGHT_PURPLE}🔧 Configure build variants (flavor + build type)${UI.RESET}"
+    help = "Select and configure build variant"
 ) {
     private val analyzer = AndroidProjectAnalyzer()
 
     override fun run() {
-        UI.showInfo("Analyzing build variants...")
+        UI.showCommandDescription("Configuring build variant")
         
         try {
             val flavors = analyzer.getFlavors().map { it.name }
@@ -29,40 +30,24 @@ class BuildVariant : CliktCommand(
                 return
             }
 
-            println()
-            println("${UI.BOLD}${UI.BRIGHT_WHITE}📊 Build Configuration Overview:${UI.RESET}")
+            GrwConfig.selectedVariant?.let { current ->
+                UI.showKeyValueList(
+                    listOf("Current Variant" to "${UI.BRIGHT_PURPLE}$current${UI.RESET}"),
+                    "Current Configuration"
+                )
+            }
             
-            val currentVariant = GrwConfig.variant
-            Input.showMultiChoice(
-                title = "Current Configuration",
-                options = mapOf(
-                    "Flavor" to (GrwConfig.flavor ?: "Not set"),
-                    "Build Type" to "debug, release",
-                    "Current Variant" to (currentVariant ?: "Not set")
-                ),
-                selectedKey = if (currentVariant != null) "Current Variant" else null
-            )
-            
-            println()
             val selectedVariant = Input.promptBuildVariant(flavors, buildTypes)
             
-            UI.showLoadingAnimation("Configuring build variant", 1000)
-            GrwConfig.setBuildVariant(selectedVariant)
+            Loader.start("Saving configuration")
+            GrwConfig.setVariant(selectedVariant)
+            Loader.stop()
             
-            Input.showSelectionResult(selectedVariant, "build variant")
-            
-            println("${UI.createBox(
-                title = "Build Variant Updated",
-                content = listOf(
-                    "Selected variant: ${UI.BRIGHT_PURPLE}$selectedVariant${UI.RESET}",
-                    "This combines your flavor + build type",
-                    "Ready for development!"
-                ),
-                color = UI.PURPLE
-            )}")
+            UI.showConfigUpdate("Build Variant", selectedVariant, "Configuration saved to .grw")
+            println()
             
         } catch (e: Exception) {
-            UI.showError("Failed to configure build variant: ${e.message}")
+            UI.showCommandError("grw variant", e.message ?: "Unknown error occurred")
         }
     }
 }

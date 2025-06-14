@@ -6,12 +6,13 @@ import com.github.ajalt.clikt.core.CliktError
 import com.github.ajalt.clikt.parameters.arguments.argument
 import dev.namn.cli.GrwConfig
 import dev.namn.cli.utils.Loader
+import dev.namn.cli.utils.UI
 import dev.namn.cli.utils.runShell
 import java.io.File
 
 class Gen : CliktCommand(
     name = "gen",
-    help = "🚀 Generate APK or AAB"
+    help = "Generate APK or AAB"
 ) {
     private val assetType by argument(
         name = "ASSET_TYPE",
@@ -19,38 +20,46 @@ class Gen : CliktCommand(
     )
 
     override fun run() {
-        val flavor = GrwConfig.flavor
-            ?: throw CliktError("No flavor set. Run `grw flw <flavor>` first.")
-        val variant = GrwConfig.variant
-            ?: throw CliktError("No variant set. Run `grw vnt <variant>` first.")
+        UI.showCommandDescription("Generating ${assetType.uppercase()}")
+
+        val selectedVariant = GrwConfig.selectedVariant
+            ?: throw CliktError("No build variant set. Run `grw variant` first.")
+
+        UI.showKeyValueList(
+            listOf("Build Variant" to "${UI.BRIGHT_PURPLE}$selectedVariant${UI.RESET}"),
+            "Build Configuration"
+        )
 
         val prefix = when (assetType.lowercase()) {
             "apk" -> "assemble"
             "aab" -> "bundle"
             else -> throw CliktError("Unknown ASSET_TYPE '$assetType'. Use 'apk' or 'aab'.")
         }
-        val taskName = buildString {
-            append(prefix)
-            append(flavor.replaceFirstChar { it.uppercase() })
-            append(variant.replaceFirstChar { it.uppercase() })
-        }
 
-        val cmd = "./gradlew $taskName"
-        Loader.start("Generating $assetType…")
-        runShell(cmd)
-        Loader.stop()
+        val taskName = "$prefix${selectedVariant.replaceFirstChar { it.uppercase() }}"
 
-        val ext = assetType.lowercase()
-        val expectedPattern = Regex(".*-${flavor.lowercase()}-${variant.lowercase()}\\.$ext$")
-        val projectRoot = File(System.getProperty("user.dir"))
-        val matches = projectRoot.walkTopDown()
-            .filter { it.isFile && expectedPattern.matches(it.name.lowercase()) }
-            .toList()
+        try {
+            Loader.start("Running Gradle task: $taskName")
+            val cmd = "./gradlew $taskName"
+            runShell(cmd)
 
-        if (matches.isEmpty()) {
-            echo("⚠️ Could not locate the generated $assetType file.")
-        } else {
-            echo("✅ Artifact located at: ${matches.first().absolutePath}")
+            val ext = assetType.lowercase()
+            val expectedPattern = Regex(".*\\.$ext$", RegexOption.IGNORE_CASE)
+            val projectRoot = File(System.getProperty("user.dir"))
+            val matches = projectRoot.walkTopDown()
+                .filter { it.isFile && expectedPattern.matches(it.name) }
+                .toList()
+
+            Loader.stop()
+            if (matches.isEmpty()) {
+                UI.showWarning("Could not locate the generated $assetType file")
+            } else {
+                UI.showCommandSuccess("Artifact generated: ${matches.first().absolutePath}")
+            }
+
+        } catch (e: Exception) {
+            Loader.stop()
+            UI.showCommandError("grw gen", e.message ?: "Generation failed")
         }
     }
 }
