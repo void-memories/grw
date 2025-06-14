@@ -29,6 +29,38 @@ class AndroidProjectAnalyzer {
         return listOf("debug", "release")
     }
 
+    fun getProjectModules(): List<String> {
+        val modules = mutableListOf<String>()
+        
+        // Try settings.gradle.kts first, then settings.gradle
+        val settingsKts = File(projectDir, "settings.gradle.kts")
+        val settingsGroovy = File(projectDir, "settings.gradle")
+        
+        val settingsFile = when {
+            settingsKts.exists() -> settingsKts
+            settingsGroovy.exists() -> settingsGroovy
+            else -> return emptyList()
+        }
+        
+        try {
+            val content = settingsFile.readText()
+            
+            // Parse include statements like: include(":app"), include(":core"), include ":app"
+            val includeRegex = """include\s*\(\s*["']([^"']+)["']\s*\)|include\s+["']([^"']+)["']""".toRegex()
+            
+            includeRegex.findAll(content).forEach { match ->
+                val moduleName = match.groupValues[1].ifEmpty { match.groupValues[2] }
+                // Remove the leading colon if present
+                val cleanName = moduleName.removePrefix(":")
+                modules.add(cleanName)
+            }
+            
+            return modules.toList()
+        } catch (e: Exception) {
+            return emptyList()
+        }
+    }
+
     private fun findAppProject(project: GradleProject): GradleProject? {
         //TODO: take in onboarding step
         project.children.find { it.name == "app" }?.let { return it }

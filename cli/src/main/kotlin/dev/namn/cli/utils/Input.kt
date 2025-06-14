@@ -5,7 +5,7 @@ import com.github.kinquirer.components.ListViewOptions
 import com.github.kinquirer.components.promptList
 
 object Input {
-    private fun promptList(
+     fun promptList(
         choices: List<String>,
         message: String = "Select an option",
         hint: String = "Use ↑/↓ arrows and Enter to select"

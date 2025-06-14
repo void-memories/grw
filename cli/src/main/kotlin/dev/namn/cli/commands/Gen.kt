@@ -1,4 +1,3 @@
-// src/main/kotlin/dev/namn/cli/commands/Gen.kt
 package dev.namn.cli.commands
 
 import com.github.ajalt.clikt.core.CliktCommand

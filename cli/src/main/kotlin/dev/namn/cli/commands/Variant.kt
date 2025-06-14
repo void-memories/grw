@@ -7,7 +7,7 @@ import dev.namn.cli.utils.Input
 import dev.namn.cli.utils.Loader
 import dev.namn.cli.utils.UI
 
-class BuildVariant : CliktCommand(
+class Variant : CliktCommand(
     name = "variant",
     help = "Select and configure build variant"
 ) {
