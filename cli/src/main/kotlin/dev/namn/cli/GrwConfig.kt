@@ -2,18 +2,34 @@ package dev.namn.cli
 
 import dev.namn.cli.utils.Logger
 import org.json.JSONObject
+import org.json.JSONException
 import java.io.File
 import java.io.IOException
 
 object GrwConfig {
-    private val configFile = File(".grw")
+    private val configFile = File(".grw/config.json")
 
     var selectedVariant: String? = null
         private set
 
     fun init() {
         Logger.info("Initializing GrwConfig")
+        createWorkingDir()
         readConfigFromDisk()
+    }
+
+    private fun createWorkingDir() {
+        val configDir = configFile.parentFile
+
+        if (!configDir.exists()) {
+            configDir.mkdirs()
+            println("✅ Created directory: ${configDir.absolutePath}")
+        }
+
+        if (!configFile.exists()) {
+            configFile.writeText("{}")
+            println("✅ Created config file: ${configFile.absolutePath}")
+        }
     }
 
     private fun readConfigFromDisk() {
@@ -33,7 +49,7 @@ object GrwConfig {
     private fun loadVars(jsonString: String) {
         val json = try {
             JSONObject(jsonString)
-        } catch (e: Exception) {
+        } catch (e: JSONException) {
             JSONObject()
         }
 
@@ -59,12 +75,10 @@ object GrwConfig {
     }
 
     fun toJsonObject(): JSONObject = JSONObject().apply {
-        put("variant", selectedVariant)
+        put("selectedVariant", selectedVariant)
     }
 
     override fun toString(): String {
-        return JSONObject().apply {
-            selectedVariant?.let { put("selectedVariant", it) }
-        }.toString()
+        return toJsonObject().toString()
     }
 }

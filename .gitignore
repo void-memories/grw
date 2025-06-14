@@ -49,3 +49,6 @@ sample-app/.idea/
 *.tmp
 *.temp
 .idea/
+
+# extern
+.grw
