@@ -1,7 +1,9 @@
 package dev.namn.cli.utils
 
+import com.github.ajalt.clikt.core.CliktError
+
 fun runShell(cmd: String) {
-    Logger.info("Executing shell command → $cmd")
+    UI.showInfo("Executing shell command → $cmd")
     try {
         val process = ProcessBuilder("bash", "-c", cmd)
             .redirectErrorStream(true)
@@ -9,21 +11,21 @@ fun runShell(cmd: String) {
 
         val output = process.inputStream.bufferedReader().use { it.readText() }
 
-        output.lineSequence().forEach { Logger.info(it) }
+        output.lineSequence().forEach { UI.showInfo(it) }
 
         val exitCode = process.waitFor()
         if (exitCode != 0) {
-            Logger.error("Command '$cmd' exited with code $exitCode")
+            UI.showError("Command '$cmd' exited with code $exitCode")
         } else {
-            Logger.info("Command completed successfully")
+            UI.showInfo("Command completed successfully")
         }
     } catch (e: Exception) {
-        Logger.error("Failed to execute '$cmd': ${e.message}")
+        UI.showError("Failed to execute '$cmd': ${e.message}")
     }
 }
 
 fun runShellWithOutput(cmd: String): String {
-    Logger.info("Executing shell command → $cmd")
+    UI.showInfo("Executing shell command → $cmd")
     return try {
         val process = ProcessBuilder("bash", "-c", cmd)
             .redirectErrorStream(true)
@@ -33,14 +35,17 @@ fun runShellWithOutput(cmd: String): String {
 
         val exitCode = process.waitFor()
         if (exitCode != 0) {
-            Logger.error("Command '$cmd' exited with code $exitCode")
+            UI.showError("Command '$cmd' exited with code $exitCode")
             ""
         } else {
-            Logger.info("Command completed successfully")
+            UI.showInfo("Command completed successfully")
             output
         }
     } catch (e: Exception) {
-        Logger.error("Failed to execute '$cmd': ${e.message}")
+        UI.showError("Failed to execute '$cmd': ${e.message}")
         ""
     }
 }
+
+fun abort(msg: String): Nothing = throw CliktError(msg)
+fun abort(e: Throwable): Nothing = throw CliktError(e.message)

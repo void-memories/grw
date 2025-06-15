@@ -1,11 +1,12 @@
 package dev.namn.cli.commands.gradle
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.CliktError
 import com.github.ajalt.clikt.parameters.arguments.argument
 import dev.namn.cli.GrwConfig
 import dev.namn.cli.utils.Loader
 import dev.namn.cli.utils.UI
+import dev.namn.cli.utils.UI.showSuccess
+import dev.namn.cli.utils.abort
 import dev.namn.cli.utils.runShell
 import java.io.File
 
@@ -22,7 +23,7 @@ class Gen : CliktCommand(
         UI.showCommandDescription("Generating ${assetType.uppercase()}")
 
         val selectedVariant = GrwConfig.selectedVariant
-            ?: throw CliktError("No build variant set. Run `grw variant` first.")
+            ?: abort("No build variant set. Run `grw variant` first.")
 
         UI.showKeyValueList(
             listOf("Build Variant" to "${UI.BRIGHT_PURPLE}$selectedVariant${UI.RESET}"),
@@ -32,7 +33,7 @@ class Gen : CliktCommand(
         val prefix = when (assetType.lowercase()) {
             "apk" -> "assemble"
             "aab" -> "bundle"
-            else -> throw CliktError("Unknown ASSET_TYPE '$assetType'. Use 'apk' or 'aab'.")
+            else -> abort("Unknown ASSET_TYPE '$assetType'. Use 'apk' or 'aab'.")
         }
 
         val taskName = "$prefix${selectedVariant.replaceFirstChar { it.uppercase() }}"
@@ -51,14 +52,14 @@ class Gen : CliktCommand(
 
             Loader.stop()
             if (matches.isEmpty()) {
-                UI.showWarning("Could not locate the generated $assetType file")
+                abort("Could not locate the generated $assetType file")
             } else {
-                UI.showCommandSuccess("Artifact generated: ${matches.first().absolutePath}")
+                showSuccess("Artifact generated: ${matches.first().absolutePath}")
             }
 
         } catch (e: Exception) {
             Loader.stop()
-            UI.showCommandError("grw gen", e.message ?: "Generation failed")
+            abort(e)
         }
     }
 }

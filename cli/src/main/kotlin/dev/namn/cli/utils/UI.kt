@@ -37,6 +37,8 @@ object UI {
     const val ITALIC = "\u001B[3m"
     const val UNDERLINE = "\u001B[4m"
 
+    fun showException(e: Throwable) = showError(e.message ?: "Something went wrong")
+
     fun showSuccess(message: String) {
         println("${BRIGHT_GREEN}✓${RESET} $message")
     }
@@ -45,25 +47,12 @@ object UI {
         println("${BRIGHT_RED}✗${RESET} $message")
     }
 
-    fun showWarning(message: String) {
-        println("${BRIGHT_YELLOW}!${RESET} $message")
-    }
-
     fun showInfo(message: String) {
         println("${BRIGHT_BLUE}i${RESET} $message")
     }
 
     fun showCommandDescription(description: String = "") {
         println("${BRIGHT_BLUE}▶${RESET} ${BOLD}$description${RESET}")
-    }
-
-    fun showCommandSuccess(message: String) {
-        println("${BRIGHT_GREEN}✅${RESET} $message")
-    }
-
-    fun showCommandError(command: String, error: String) {
-        println("${BRIGHT_RED}❌${RESET} ${BOLD}$command${RESET} failed")
-        println("  ${DIM}$error${RESET}")
     }
 
     fun showConfigUpdate(key: String, value: String, description: String = "") {

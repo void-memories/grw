@@ -2,6 +2,8 @@ package dev.namn.cli.commands.gradle
 
 import com.github.ajalt.clikt.core.CliktCommand
 import dev.namn.cli.utils.Loader
+import dev.namn.cli.utils.UI
+import dev.namn.cli.utils.UI.showSuccess
 import dev.namn.cli.utils.runShell
 
 class CleanBuild : CliktCommand(
@@ -15,6 +17,6 @@ class CleanBuild : CliktCommand(
         runShell(cmd)
         Loader.stop()
 
-        echo("✅ Project clean & build successful!")
+        showSuccess("Project clean & build successful!")
     }
 }

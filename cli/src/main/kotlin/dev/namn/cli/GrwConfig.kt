@@ -1,8 +1,9 @@
 package dev.namn.cli
 
-import dev.namn.cli.utils.Logger
-import org.json.JSONObject
+import dev.namn.cli.utils.UI
+import dev.namn.cli.utils.abort
 import org.json.JSONException
+import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 
@@ -13,7 +14,7 @@ object GrwConfig {
         private set
 
     fun init() {
-        Logger.info("Initializing GrwConfig")
+        UI.showInfo("Initializing GrwConfig")
         createWorkingDir()
         readConfigFromDisk()
     }
@@ -35,14 +36,14 @@ object GrwConfig {
     private fun readConfigFromDisk() {
         try {
             if (configFile.exists()) {
-                Logger.info("Config file found at ${configFile.absolutePath}, loading…")
+                UI.showInfo("Config file found at ${configFile.absolutePath}, loading…")
                 loadVars(configFile.readText())
-                Logger.info("Loaded config → selectedVariant=$selectedVariant")
+                UI.showInfo("Loaded config → selectedVariant=$selectedVariant")
             } else {
-                Logger.info("Config file not found, will create when variant is selected")
+                UI.showInfo("Config file not found, will create when variant is selected")
             }
         } catch (e: IOException) {
-            Logger.error("Failed to read config from disk: ${e.message}")
+            abort(e)
         }
     }
 
@@ -62,14 +63,14 @@ object GrwConfig {
             selectedVariant?.let { json.put("selectedVariant", it) }
 
             configFile.writeText(json.toString(2))
-            Logger.info("Config written to disk → selectedVariant=$selectedVariant")
+            UI.showInfo("Config written to disk → selectedVariant=$selectedVariant")
         } catch (e: IOException) {
-            Logger.error("Failed to write config to disk: ${e.message}")
+            abort(e)
         }
     }
 
     fun setVariant(variant: String) = apply {
-        Logger.info("Setting variant → $variant")
+        UI.showInfo("Setting variant → $variant")
         this.selectedVariant = variant
         writeConfigToDisk()
     }
