@@ -2,16 +2,17 @@ package dev.namn.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.subcommands
-import dev.namn.cli.commands.AndroidTest
-import dev.namn.cli.commands.Build
-import dev.namn.cli.commands.Clean
-import dev.namn.cli.commands.CleanBuild
-import dev.namn.cli.commands.Config
-import dev.namn.cli.commands.Gen
-import dev.namn.cli.commands.Run
-import dev.namn.cli.commands.Task
-import dev.namn.cli.commands.Test
-import dev.namn.cli.commands.Variant
+import dev.namn.cli.commands.adb.ClearData
+import dev.namn.cli.commands.gradle.AndroidTest
+import dev.namn.cli.commands.gradle.Build
+import dev.namn.cli.commands.gradle.Clean
+import dev.namn.cli.commands.gradle.CleanBuild
+import dev.namn.cli.commands.gradle.Config
+import dev.namn.cli.commands.gradle.Gen
+import dev.namn.cli.commands.adb.Run
+import dev.namn.cli.commands.gradle.Task
+import dev.namn.cli.commands.gradle.Test
+import dev.namn.cli.commands.gradle.Variant
 import dev.namn.cli.utils.UI
 
 class GrwCliImpl : CliktCommand(
@@ -41,6 +42,7 @@ fun main(args: Array<String>) = GrwCliImpl()
         Build(),
         Run(),
         Test(),
-        AndroidTest()
+        AndroidTest(),
+        ClearData()
     )
     .main(args) 

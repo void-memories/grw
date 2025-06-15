@@ -1,4 +1,4 @@
-package dev.namn.cli.commands
+package dev.namn.cli.commands.gradle
 
 import com.github.ajalt.clikt.core.CliktCommand
 import dev.namn.cli.GrwConfig

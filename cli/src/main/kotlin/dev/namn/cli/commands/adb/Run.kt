@@ -1,11 +1,13 @@
-package dev.namn.cli.commands
+package dev.namn.cli.commands.adb
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.CliktError
 import dev.namn.cli.GrwConfig
+import dev.namn.cli.utils.Input
 import dev.namn.cli.utils.Loader
 import dev.namn.cli.utils.UI
 import dev.namn.cli.utils.runShell
+import dev.namn.cli.utils.runShellWithOutput
 import org.w3c.dom.Element
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
@@ -25,12 +27,37 @@ class Run : CliktCommand(
             "Build Configuration"
         )
 
+        // Device selection logic
+        Loader.start("Inspecting connected devices...")
+        val devicesOutput = runShellWithOutput("adb devices").trim()
+        val deviceLines = devicesOutput.split("\n").drop(1) // Skip "List of devices attached" line
+        val devices = deviceLines
+            .filter { it.isNotBlank() && it.contains("\tdevice") }
+            .map { it.split("\t")[0] }
+        Loader.stop()
+        
+        if (devices.isEmpty()) {
+            UI.showCommandError("grw run", "No ADB devices found. Please connect a device and enable USB debugging.")
+            return
+        }
+        
+        val selectedDevice = if (devices.size == 1) {
+            echo("📱 Using device: ${devices[0]}")
+            devices[0]
+        } else {
+            Input.promptList(
+                choices = devices,
+                message = "Select Android device to install and run app",
+                hint = "Choose the device you want to install and run the app on"
+            )
+        }
+
         val installTask = "install${selectedVariant.replaceFirstChar { it.uppercase() }}"
 
         try {
             Loader.start("Installing $selectedVariant")
             runShell("./gradlew $installTask")
-            Loader.start("Installing $selectedVariant")
+            Loader.stop()
 
             Loader.start("Finding launcher activity")
             val projectRoot = File(System.getProperty("user.dir"))
@@ -81,9 +108,9 @@ class Run : CliktCommand(
                 launchActivity = pkg + launchActivity
             }
 
-            // Launch the app
+            // Launch the app with selected device
             Loader.start("Launching app")
-            runShell("adb shell am start -n $pkg/$launchActivity")
+            runShell("adb -s $selectedDevice shell am start -n $pkg/$launchActivity")
             Loader.stop()
 
             UI.showCommandSuccess("App installed and launched: $pkg/$launchActivity")
